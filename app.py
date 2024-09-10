@@ -1,3 +1,4 @@
+#make sure to display that the news articles are relevant disaster related information from the last 48 hours
 from flask import Flask, jsonify
 from flask_cors import CORS
 import requests
