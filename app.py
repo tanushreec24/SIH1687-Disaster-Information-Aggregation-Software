@@ -32,20 +32,18 @@ def categorize_by_keywords(text):
 
 @app.route('/scrape-disasters', methods=['GET'])
 def scrape_disaster_articles():
-    def search_articles(api_key, query="disaster"):
-        url = f"https://newsapi.org/v2/everything?q={query}&apiKey={api_key}"
-        urli = f"https://newsapi.org/v2/everything?q={query}&sources=google-news-in&apiKey=e9746f8506ac4abaa3c846424ae5ad97"
-        urlo = f"https://newsapi.org/v2/everything?q={query}&country=in&apiKey={api_key}&language=en"
-        response = requests.get(urlo)
+    def search_articles(api_key, query="disaster", country="in", language="en"):
+        url = f"https://newsdata.io/api/1/news?apikey={api_key}&q={query}&country={country}&language={language}"
+        response = requests.get(url)
         data = response.json()
 
         disaster_articles = []
-        if data.get('status') == 'ok':
-            for article in data['articles']:
-                title = article['title']
-                link = article['url']
+        if data.get('status') == 'success':
+            for article in data.get('results', []):
+                title = article.get('title', '')
+                link = article.get('link', '')
                 # Match titles with potential disaster keywords
-                if re.search(r'emergency|earthquake|flood|hurricane|wildfire|tsunami|landslide|drought|seismic activity', title, re.IGNORECASE) and not re.search(r'consent\.yahoo\.com', link):
+                if re.search(r'emergency|earthquake|flood|hurricane|wildfire|tsunami|landslide|drought|seismic activity', title, re.IGNORECASE):
                     disaster_articles.append({'title': title, 'link': link})
         return disaster_articles
 
@@ -57,7 +55,18 @@ def scrape_disaster_articles():
 
             # Extract the textual content from the HTML
             paragraphs = soup.find_all('p')
-            full_text = ' '.join([p.text for p in paragraphs])
+            valid_paragraphs = []
+            
+            # Filter out irrelevant paragraphs (ads, sidebars, etc.)
+            for p in paragraphs:
+                text = p.get_text().strip()
+                # Skip paragraphs with ads or unrelated content (commonly found patterns)
+                if re.search(r'advertisement|subscribe|related stories|sign up|newsletter|more stories', text, re.IGNORECASE):
+                    continue
+                valid_paragraphs.append(text)
+
+            # Join valid paragraphs as the full article text
+            full_text = ' '.join(valid_paragraphs)
 
             if not full_text:  # Fallback if no paragraphs are found
                 full_text = article['title']
@@ -65,12 +74,25 @@ def scrape_disaster_articles():
             # Try to classify the disaster type using keyword matching
             disaster_type = categorize_by_keywords(full_text)
 
-            # Add the summary (first two paragraphs) and disaster type to the article
-            summary = ' '.join([p.text for p in paragraphs[:2]]) if paragraphs else 'No summary available'
+            # Add the summary (first two paragraphs with disaster-related keywords) and disaster type to the article
+            summary = None
+            for paragraph in valid_paragraphs:
+                if any(re.search(r'\b' + re.escape(keyword) + r'\b', paragraph, re.IGNORECASE) for keyword_list in DISASTER_KEYWORDS.values() for keyword in keyword_list):
+                    if summary is None:
+                        summary = paragraph  # First valid paragraph with a keyword
+                    else:
+                        summary += ' ' + paragraph  # Add second valid paragraph
+                    if summary.count(' ') > 30:  # Limit summary length to around two sentences
+                        break
+
+            # If no summary could be extracted, default to 'no summary available'
+            if not summary:
+                summary = 'No summary available'
+
             article['summary'] = summary
             article['disaster_type'] = disaster_type
 
-    api_key = "e9746f8506ac4abaa3c846424ae5ad97"
+    api_key = "pub_5319018a1e56dcf405f9b26c68e7ec6978df0"
     disaster_articles = search_articles(api_key)
     scrape_and_classify(disaster_articles)
 
