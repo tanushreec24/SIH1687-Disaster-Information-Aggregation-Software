@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+  }
+  
+  .splitting {
+    display: flex;
+    width: 100%; /* Full width of the screen */
+  }
+  
+  .map-container {
+    height:100%;
+    margin-top: 20px;
+    flex: 3; /* 3/4th of the screen */
+    background-color: black;
+    color: white; /* If you want text to be visible in white on black background */
+  }
+  
+  .news-dashboard-container {
+    height:100%;
+    margin-top:20px;
+    flex: 1; /* 1/4th of the screen */
+    background-color: pink;
+    color: black; /* Adjust text color if necessary */
+  }
+  
+  .map-container, .news-dashboard-container {
+    padding: 1rem; /* Optional: Add padding to give some space inside the divs */
+    height: 100%; /* Make the containers fill the full height */
+  }
+  
