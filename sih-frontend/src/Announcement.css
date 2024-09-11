@@ -1,0 +1,32 @@
+/* Announcement.css */
+.announcement {
+    background: #181C14;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    font-size: 1.2rem;
+  }
+  
+  .at {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+  }
+  
+  .text1 {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* Ensures it expands to take up all available space */
+  }
+  
+  .text1 span {
+    margin-right: 30px; /* Adds space between spans */
+    min-width: 350px; /* Ensure each span has a minimum width for spacing */
+    text-align: center; /* Center align text inside each span */
+  }
+  
+  .text1 span:last-child {
+    margin-right: 0; /* Remove margin for the last span */
+  }
+  
