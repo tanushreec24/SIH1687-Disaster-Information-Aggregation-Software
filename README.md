@@ -1,5 +1,9 @@
 website updated with disaster map marker in the homepage of the main website :)
 
+index.html have the disaster map marker code
+
+
+
 
 
 
