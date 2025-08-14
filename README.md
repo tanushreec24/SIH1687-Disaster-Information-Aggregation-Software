@@ -6,7 +6,7 @@
 ---
 
 ## **Description**
-A **Web Application** that collects information from various sources — including **social media**, **newsletters**, and **open sources** — about **natural disasters** in **real time**.  
+A **Web Application** that collects information from various sources including **social media**, **newsletters**, and **open sources** about **natural disasters** in **real time**.  
 
 The application presents the collected information in a **visually convenient** way on the website, enabling quick analysis and decision-making.  
 
